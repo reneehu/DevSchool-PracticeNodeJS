@@ -26,7 +26,7 @@ var CRLF = '\r\n';
 
     * Finish implementing the buildResponse function
 
-*/
+    */
 
 
 // takes an HTTP request as a string, e.g.
@@ -42,7 +42,7 @@ exports.parseRequest = function(data) {
 
     /* TODO */
     var myData = data.split("\n");
-    console.log(myData); 
+    // console.log(myData); 
     var myFinalData = myData[0].split(" ");
 
     return myFinalData;
@@ -66,7 +66,7 @@ exports.checkRequest = function(requestArguments) {
 
     // if last argument is not 'HTTP/1.1'
     else if (requestArguments[2] != 'HTTP/1.1\r'){
-        
+
         return false;
     }
     
@@ -102,13 +102,49 @@ exports.buildResponse = function(requestedResource) {
 
         // file found
         else {
-    
+
             // build response and return
             return _200 + CRLF + _html + CRLF + CRLF + htmlString;
         }
-    }
+    }    
+    // requested resource is an css file
+    else if (path.extname(requestedResource) === '.css') {
 
-    /* TODO */
+        // build the file with a header and footer
+        var cssString = retrieve('view/' + requestedResource);
+        console.log(cssString);
+
+        // buildPage returns false if the cssfile doesn't exist
+        if (cssString === false) {
+            return _404
+        }
+        // file found
+        else {
+
+            // build response and return
+            return _200 + CRLF + _css + CRLF + CRLF + cssString;
+            console.log("working working");
+        }
+    }
+        // requested resource is an js file
+        else if (path.extname(requestedResource) === '.js') {
+
+        // build the file with a header and footer
+        var jsString = retrieve('view/' + requestedResource);
+        console.log(jsString);
+
+        // buildPage returns false if the jsfile doesn't exist
+        if (jsString === false) {
+            return _404
+        }
+        // file found
+        else {
+
+            // build response and return
+            return _200 + CRLF + _js + CRLF + CRLF + jsString;
+            console.log("working working");
+        }
+    }
 
     // requested resource is a filetype we aren't going to handle
     else {
@@ -150,7 +186,7 @@ function retrieve(resource) {
 
     // file exists
     else {
-        
+
         // check if it's readable
         try {
             fs.accessSync(resource, fs.R_OK);
